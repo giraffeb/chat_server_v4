@@ -43,13 +43,13 @@ module.exports = function(http, wrap){
 
             //채팅방을 종료가 불가능하므로.
             //채팅방 기준으로 되어있는데, 채팅방을 만약 카톡처럼 지우고 생성할 수 있다면 다른 방식이 필요
-            let chatroom_list = await ChatRoom.find({$or: [{sender: current_user.user_id}, {receiver: current_user.user_id}]});
+            let chatroom_list = await ChatRoom.find({$or: [{sender: current_user.user_id}, {receiver: current_user.user_id}]}).distinct("_id");
+            console.log('#chatroom_list->', chatroom_list);
+            // chatroom_list.map((chatroom)=>{
+            //     console.log('chatroom_id->', chatroom._id);
+            //     socket.join(chatroom._id);
+            // })
             
-            chatroom_list.map((chatroom)=>{
-                console.log('chatroom_id->', chatroom._id);
-                socket.join(chatroom._id);
-            })
-            //
             ack_fn('ack');
         }));
 
@@ -95,24 +95,20 @@ module.exports = function(http, wrap){
                 result.chat_list.push(data);
                 result = await result.save();
             }
-            console.log('result chatroom_id->',result._id);
+
             
             let temp_list = io.sockets.connected;
 
             // console.log(io.sockets.connected);
-            let target;
+            let target = null;
             for(let t in io.sockets.connected){
                 if(io.sockets.connected[t].nickname === data.receiver){
                     target = io.sockets.connected[t];
+                    
                 }
 
             }
-
-            console.log('nickname->',socket.nickname);
-            target.join(result._id);
-            socket.join(result._id);
-            socket.in(result._id).emit('message', data);
-            
+            io.to(target.id).emit('message', data);
         }));
 
 

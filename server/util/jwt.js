@@ -15,7 +15,7 @@ exports.verifyToken = function verifyToken(token){
 }
 
 exports.signinToken = function signinToken(user_info){
-    console.log('my_secret ->', my_secret);
+    // console.log('my_secret ->', my_secret);
     let user_id = user_info.user_id;
     let expire_time = '1h';
 
