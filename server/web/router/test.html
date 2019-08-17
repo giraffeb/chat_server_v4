@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>hi</h1>
+    <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
+    
+    
+    <script>
+    
+    let db_name = 'test';
+    let dexie_db = new Dexie(db_name);
+    
+    let obj_schme = {hi: 'a,b,c', hi2: 'd,e,f'};
+
+
+    function getIdxDBVersion(db_name){
+        console.log('is it fired?');
+    //dexieDB가 열려있는 상태에서도 접근이 가능한지 확인할 것.
+    if(dexie_db.isOpen() === true){
+        dexie_db.close();
+    }
+
+    
+
+    return new Promise((resolve, reject)=>{
+        console.log('second fire?');
+        let request = indexedDB.open(db_name);
+
+        request.onsuccess = (event)=>{
+            let idxDb = event.target.result;
+            let version = idxDb.version;
+
+            resolve(version);
+    
+        }
+    
+        request.onerror = (event)=>{
+            reject(event);
+        }
+    }).then((version)=>{
+        // console.log('sucess->', version);
+        current_db_version = version;
+        //다시 열어 놓기.
+        dexie_db.open();
+        return current_db_version;
+    }).catch((err)=>{
+        console.log('indexedDb open Failed->', err);
+        
+    });
+}
+    </script>
+    </body>
+</html>

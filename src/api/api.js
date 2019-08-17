@@ -1,17 +1,21 @@
-import * as debug from './debug';
+import * as debug from '../util/debug';
+import Message from '../util/vo';
 
-import Message from './vo';
-// import * as dao from './dexie_dao';
-// import socket from './socket-io-listen';
+
+import * as dao from '../db/dexie_dao';
+import socket, {setSocketListen, socketSendEvent} from '../socket-io-client/client-socket-io-interface';
+import store from '../redux/store/mystore';
+import {chatList} from '../redux/modules/socket_event';
+
 
 // //#0 로그아웃 기능.
-// export function logout(){
-//     let logout_btn = document.getElementById('logout');
-//     logout_btn.onclick = (event)=>{
-//         console.log('logout call');
-//         window.open('/logout', '_self');
-//     }
-// }
+function logout(){
+    sessionStorage.removeItem('jwt');
+    window.open('/logout', '_self');
+    
+}
+
+
 
 // //#1. 친구추가기능 이벤트 추가하는 역할
 // export async function add_friend(){
@@ -32,37 +36,37 @@ import Message from './vo';
 // }
 
 // //#1-1. 친구아이디 입력후 엔터시 이벤트
-// export async function add_friend_event(friend_id){
-//     let response = await fetch('/friend'
-//                     , {
-//                         headers: {
-//                             'Accept': 'application/json',
-//                             'Content-Type': 'application/json'
-//                           },
-//                         method: "POST"
-//                         , body: JSON.stringify({friend_id: friend_id})
-//                         }
-//                     );
-//     let result;
+export async function add_friend_event(friend_id){
+    let response = await fetch('/friend'
+                    , {
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                          },
+                        method: "POST"
+                        , body: JSON.stringify({friend_id: friend_id})
+                        }
+                    );
+    let result;
     
-//     if(response.ok){
-//         //서버ㅔ서 해당 사용자 정보 가져옴.
-//         result = await response.json();
-//         //상대방에게 친구추가가 되었음을 알리고, 상대방도 등록하게함.
-//         socket.emit('add_friend', friend_id);
-//     }else{
-//         //해당 사용자가 없는 등 정상적인 응답이 아니라면
-//         result = await response.json();
-//         console.log('not found user');
-//         alert('해당 유저가 존재하지 않습니다.');
-//         return;
-//     }
-
-//     //서버상의 친구등록 과정이 완료되고 html그리기
-//     let friend_li_element = create_friend_element(friend_id);
-//     let friend_list_element = document.getElementById('friend_list');
-//     friend_list_element.append(friend_li_element);
-// }
+    if(response.ok){
+        //서버ㅔ서 해당 사용자 정보 가져옴.
+        result = await response.json();
+        console.log('친구 추가 정상적완료');
+        //상대방에게 친구추가가 되었음을 알리고, 상대방도 등록하게함.
+        // let db_ver = await dao.getCurrentDBVersion();
+        // dao.testdb(friend_id, db_ver+1);
+        dao.addFriendDB(friend_id);
+        socket.emit('added_friend', friend_id);
+        return true;
+    }else{
+        //해당 사용자가 없는 등 정상적인 응답이 아니라면
+        result = await response.json();
+        console.log('not found user->', result);
+        alert('해당 유저가 존재하지 않습니다.');
+        return false;
+    }
+}
 
 // //#1-2 친구추가 html그릴 엘리먼트 생성
 // export function create_friend_element(friend_id){
@@ -84,7 +88,7 @@ import Message from './vo';
 
 
 //#2. 친구 목록 가져오기
-export async function get_friend_list(){
+async function get_friend_list(){
     //hello에서 가져온 현재 유저 정보의 친구목록에서 친구 아이디값을 가져옴
     let current_user = JSON.parse(sessionStorage.getItem("currentUser"));
     //친구 아이디값으로 다시 서버에서 정보를 가져옴.
@@ -100,7 +104,7 @@ export async function get_friend_list(){
 }
 
 //#3. hello시 친구에 해당하는 채팅방을 가져옴. 클라이언트 디비에 저장하는데 사용됨.
-export async function init_get_chatroom_event(friend_id){
+async function init_get_chatroom_event(friend_id){
     console.log('넘어온 friend_id->', friend_id);
     // let friend_id = event.srcElement.innerHTML;
 
@@ -265,32 +269,41 @@ export async function init_get_chatroom_event(friend_id){
 
 // //#8. chatting messgae 보내기
 // //보내는 내용을 현재 클라이언트의 indexeddb에 저장합니다.
-export function send_message_event(){
-    
-    let chat_input_textarea = document.getElementById('chat_input_textarea');
-    chat_input_textarea.onkeyup = async (event)=>{
-        if(event.key === "Enter"){
-            console.log('send message event call it');
-            let value = event.srcElement.value;
-            value = value.trim().replace('\n', '');
-            
-            if(value.length === 0){
-                return;
-            }
+async function send_message_event(event){
 
-            let message = create_message(value);
-            // socket.emit('message', message);    
+    if(event.key === 'Enter'){
+        let text_area = event.target;
+        let message_text = text_area.value;
 
-            console.log(message);
-            chat_input_textarea.value="";
-            // saveMessageToDB(message);
-            
+        message_text = message_text.trim()
+        message_text = message_text.replace('\n', '');
+
+        if(message_text.length === 0){
+            return;
         }
+        
+        let new_message = create_message(message_text);
+
+        socketSendEvent.sendMessage(new_message);
+        text_area.value = '';
+
+        let current_chatroom = JSON.parse(sessionStorage.getItem("currentChatRoom"));
+        let current_user = JSON.parse(sessionStorage.getItem("currentUser"));
+        let friend_id;
+        if(current_chatroom.sender === current_user.user_id){
+          friend_id = current_chatroom.receiver;
+        }else{
+          friend_id = current_chatroom.sender;
+        }
+        
+        await dao.saveMessageToDB(new_message);
+        let new_chat_list = await dao.loadMessageFromDB(friend_id);
+        store.dispatch(chatList(friend_id, new_chat_list));
     }
 }
 
 // //#9. 사용지 정보를 이용해서 메시지 형식을 완성 후 리턴합니다.
-export function create_message(msg){
+function create_message(msg){
     let current_user = JSON.parse(sessionStorage.getItem("currentUser"));
     let current_chatroom = JSON.parse(sessionStorage.getItem("currentChatRoom"));
     let message = new Message();
@@ -305,3 +318,6 @@ export function create_message(msg){
     
     return message;
 }
+
+
+export {logout, get_friend_list, init_get_chatroom_event, send_message_event, create_message};

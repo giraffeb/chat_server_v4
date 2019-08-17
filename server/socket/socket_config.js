@@ -29,6 +29,7 @@ module.exports = function(http, wrap){
             let result = jwt.verifyToken(token);
             if(result === null){
                 socket.emit('token_expired');
+                ack_fn('token_expired');
                 return;
             }
 

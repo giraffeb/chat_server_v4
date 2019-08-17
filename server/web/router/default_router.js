@@ -4,6 +4,12 @@ module.exports = function(app, wrap, root_dirname){
     let ChatRoom = require(root_dirname+'/db/models/chatroom');    
     let jwt = require(root_dirname+'/util/jwt');
 
+    app.get('/test/test', function(req, res, next){
+        console.log('catch TEST');
+        res.sendFile(__dirname+'/test.html');
+
+    })
+
     app.get('/login', wrap(async function(req, res, next){
         res.sendFile(root_dirname+"/html/index.html");
     }));
@@ -20,8 +26,11 @@ module.exports = function(app, wrap, root_dirname){
         console.log('findOne() result->', result);
         if(result === null){
             console.log('login failed');
-            return res.json({result: "failed"});
+            return res.status(401).json({result: "failed"});
             // return res.redirect('/login');
+        }else if(result.password !== password){
+            console.log('login failed');
+            return res.status(401).json({result: "failed"});
         }
 
         let token = jwt.signinToken(result);
@@ -126,8 +135,10 @@ module.exports = function(app, wrap, root_dirname){
 
             if(friend_list_checked.length > 0){
                 //이미 추가된 친구입니다.
+                console.log('이미 추가된 친구입니다.');
                 res.status(500).json({result: "이미 추가된 친구입니다."});
             }else{
+                console.log('친구 추가하기.');
                 current_user.friend_list.push(target_friend_id);
                 friend_user.friend_list.push(current_user_id);
                 
@@ -139,6 +150,7 @@ module.exports = function(app, wrap, root_dirname){
                 new_chatroom.sender = current_user_id;
                 new_chatroom.receiver = target_friend_id;
                 let result_chatroom = await new_chatroom.save();
+                
                 
                 res.json(result);
             }

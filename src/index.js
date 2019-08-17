@@ -4,30 +4,27 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 
+import store, {initStore} from './redux/store/mystore';
 
-import socketio from 'socket.io-client'
+import { Provider } from 'react-redux';
+import * as api from './api/api';
+import socket, {setSocketListen, socketSendEvent} from './socket-io-client/client-socket-io-interface';
 
-window.isLogin=true;
+
+//socket.io 이벤트 수신 등록
+setSocketListen(store);
+
+//사용자 정보 요청 로그인jwt기반.
+socketSendEvent.sendHello();
 
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+    <Provider store={store}>
+        <App />
+    </Provider>
+    , document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
 // Learn more about service workers: https://bit.ly/CRA-PWA
 serviceWorker.unregister();
-
-// let socket = socketio.connect('http://localhost:8888');
-
-// function hi(){    
-//     socket.emit('hi');
-// }
-
-// hi();
-
-// socket.on('hi', (data)=>{
-//     console.log('hi');
-//     console.log(data);
-// });
-
-console.log('isLogin -> ',window.isLogin);
