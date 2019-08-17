@@ -8,7 +8,7 @@ import socket from './client-socket-io-common';
 import * as sendSocketEvent from './client-socket-io-send';
 
 
-import friendlist, {get, message } from '../redux/modules/friendlist';
+import friendlist, {get, message, add_friend } from '../redux/modules/friendlist';
 import userinfo, { set_user_info } from '../redux/modules/userinfo';
 import socketEvent, {hello, chatList} from '../redux/modules/socket_event';
 //socket.io 클라이언트 이벤트를 수신하고 처리합니다.
@@ -121,8 +121,10 @@ function setSocketListen(store){
     })
 
 
-    socket.on('added_friend', ()=>{
-        sendSocketEvent.sendHello();
+    socket.on('added_friend', (data)=>{
+        console.log('add_friend_recieve', data);
+        dao.addFriendDB(data.sender);
+        store.dispatch(add_friend(data.sender));
     })
     
 return socket;

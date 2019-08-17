@@ -56,8 +56,10 @@ export async function add_friend_event(friend_id){
         //상대방에게 친구추가가 되었음을 알리고, 상대방도 등록하게함.
         // let db_ver = await dao.getCurrentDBVersion();
         // dao.testdb(friend_id, db_ver+1);
-        dao.addFriendDB(friend_id);
-        socket.emit('added_friend', friend_id);
+        let current_user_id = JSON.parse(sessionStorage.getItem('currentUser')).user_id;
+
+        await dao.addFriendDB(friend_id);
+        socket.emit('added_friend', {sender: current_user_id, receiver: friend_id});
         return true;
     }else{
         //해당 사용자가 없는 등 정상적인 응답이 아니라면

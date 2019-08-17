@@ -3,6 +3,7 @@ import logo from './logo.svg';
 import './App.css';
 import Template from './react/Template';
 import Signin from './react/signin';
+import Signup from './react/signup';
 
 
 import * as debug from './util/debug';
@@ -26,6 +27,7 @@ function App() {
           }
         }}/>
         <Route path="/signin" component={Signin} />
+        <Route path="/signup" component={Signup} />
     </Router>
   )
 }

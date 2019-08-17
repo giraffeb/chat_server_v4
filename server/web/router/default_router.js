@@ -39,9 +39,9 @@ module.exports = function(app, wrap, root_dirname){
         
     }));
 
-    app.get('/signup', wrap(async function(req, res, next){
-        res.sendFile(root_dirname+"/html/signup.html");
-    }));
+    // app.get('/signup', wrap(async function(req, res, next){
+    //     res.sendFile(root_dirname+"/html/signup.html");
+    // }));
 
     app.post('/signup', wrap(async function(req, res, next){
         console.log("signup process");
@@ -58,7 +58,7 @@ module.exports = function(app, wrap, root_dirname){
         let result = await new_user.save();
         console.log('save() result-> ',result);
         
-        res.redirect('/login');
+        res.redirect('/');
     }));
 
 

@@ -112,6 +112,29 @@ module.exports = function(http, wrap){
             io.to(target.id).emit('message', data);
         }));
 
+        socket.on('added_friend', wrap(async function(data){
+            /**
+             * let ChatRoom = new Schema({
+                chatroom_title: String,
+                sender: String,
+                receiver: String,
+                chat_list: Array,
+                last_date: {type: Date, default: Date.now }
+            })
+             */
+            let new_chatroom = new ChatRoom();
+            new_chatroom.sender = data.sender;
+            new_chatroom.receiver = data.receiver;
+
+            await new_chatroom.save();
+
+            for(let t in io.sockets.connected){
+                if(io.sockets.connected[t].nickname === data.receiver){
+                    io.sockets.connected[t].emit('added_friend', data);
+                    break;
+                }
+            }
+        }));
 
         socket.on('disconnecting', function(data){
             console.log("disconnecting call");
