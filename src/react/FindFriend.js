@@ -42,7 +42,7 @@ export default function FindFriend() {
 
   const onChageHandle = (event)=>{
     setInputValue(event.target.value);
-    console.log('inputValue->', input_value);
+
   };
 
   const fireFindFriend = ()=>{

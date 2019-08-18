@@ -20,7 +20,6 @@ const ChatList = (props)=>{
             {
                 props.chat_list.map((msg)=>{
                     let me = JSON.parse(sessionStorage.getItem('currentUser')).user_id;
-                    console.log('me->', me);
                     let msg_class = props.classes.avator;
                     let messenger = msg.sender;
 
@@ -30,9 +29,7 @@ const ChatList = (props)=>{
                     }else{
                         msg_class = props.classes.purpleAvatar;
                     }
-                    console.log('orange->', props.classes.orangeAvatar);
-                    console.log('purple->', props.classes.purpleAvatar);
-
+                    
                     return (<ListItem key={msg.reg_date}>
                         <ListItemAvatar>
                             <Avatar className={msg_class}>{messenger}</Avatar>

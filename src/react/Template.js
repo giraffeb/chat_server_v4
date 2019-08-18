@@ -125,7 +125,6 @@ export default function Template(props) {
 function ChatArea(props){
   
   const chat_title = useSelector((state)=>{
-    console.log('ChatArea ->', state);
     return state.socket_event.current_chatroom.chat_title;
   }, []);
   // const [chat_title, fn] = useState([]);

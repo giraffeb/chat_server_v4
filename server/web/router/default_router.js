@@ -110,6 +110,18 @@ module.exports = function(app, wrap, root_dirname){
 
     }));
 
+
+    //사용자 확인
+    app.get('/user/exist/:user_id', wrap(async function(req,res,next){
+        let user_id = req.params.user_id;
+        console.log('/user:user_id ->',user_id);
+
+        let result = await User.findOne({user_id: user_id});
+        res.json({user_id: result.user_id,
+                    exist: true                    
+                });
+    }));
+
     //친구 추가
     app.post('/friend', wrap(async function(req, res, next){
         console.log('친구 추가 호출');
