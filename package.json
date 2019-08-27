@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "engines": { 
-    "node": "12.6.0" 
+    "node": "12.6.0",
+    "npm": "6.10.2"
   },
   "dependencies": {
     "@babel/core": "7.4.3",
@@ -81,7 +82,7 @@
     "workbox-webpack-plugin": "4.2.0"
   },
   "scripts": {
-    "start": "node scripts/build.js && nodemon server_index.js",
+    "start": "nodemon server_index.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
     "server_start": "nodemon server_index.js",
