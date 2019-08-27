@@ -2,8 +2,8 @@ import React, {useState, useEffect} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Template from './react/Template';
-import Signin from './react/signin';
-import Signup from './react/signup';
+import Signin from './react/Signin';
+import Signup from './react/Signup';
 
 
 import * as debug from './util/debug';
