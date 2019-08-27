@@ -78,9 +78,10 @@
     "workbox-webpack-plugin": "4.2.0"
   },
   "scripts": {
-    "start": "node scripts/start.js",
+    "start": "node scripts/build.js && nodemon server_index.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
+    "server_start": "nodemon server_index.js",
     "watch": "npm-watch"
   },
   "watch": {
