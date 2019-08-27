@@ -2,8 +2,8 @@ import React, {useState, useEffect} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import Template from './react/Template';
-import Signin from './react/Signin';
-import Signup from './react/Signup';
+import SignIn from './react/SignIn';
+import SignUp from './react/SignUp';
 
 
 import * as debug from './util/debug';
@@ -26,8 +26,8 @@ function App() {
             return (<Template />);
           }
         }}/>
-        <Route path="/signin" component={Signin} />
-        <Route path="/signup" component={Signup} />
+        <Route path="/signin" component={SignIn} />
+        <Route path="/signup" component={SignUp} />
     </Router>
   )
 }
