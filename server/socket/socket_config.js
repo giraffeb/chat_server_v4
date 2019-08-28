@@ -140,8 +140,11 @@ module.exports = function(http, wrap){
             for(let t in io.sockets.connected){
                 if(io.sockets.connected[t].nickname === user_id){
                     ack_fn('yes alive');
+                    return;
                 }
             }
+
+            
         }))
 
         socket.on('disconnecting', function(data){

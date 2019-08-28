@@ -12,6 +12,8 @@ function sendHello(){
             };
         });
     }
+    //소켓 확인 
+    setInterval(heartbeat, 10000);
 }
 
 function sendMessage(message){
@@ -23,7 +25,9 @@ function heartbeat(){
     socket.emit('heartbeat', current_user_info.user_id, (ack)=>{
         console.log('receive hearbeat->', ack);
     });
+
+    
 }
 
 
-export { sendHello, sendMessage}; 
+export { sendHello, sendMessage, heartbeat}; 
