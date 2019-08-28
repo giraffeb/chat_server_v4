@@ -50,7 +50,9 @@ export default function FindFriend() {
         if(boolean === true){
             dispatch(add_friend(input_value)); 
         }
-    });
+    }).catch((err)=>{
+      console.log('add friend err!->', err);
+    })
     
   };
 
