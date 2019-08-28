@@ -31,8 +31,13 @@ const socket_event = (state = initState, action)=>{
                 console.log('current chatroom not exist!');
                 return;
             }
+
             new_state.current_chatroom.chat_title = action.current_chatroom.chat_title;
-            new_state.current_chatroom.chat_list = action.current_chatroom.chat_list.slice();
+            
+            if(action.current_chatroom.chat_list !== null){
+                new_state.current_chatroom.chat_list = action.current_chatroom.chat_list.slice();
+            }
+            
 
             return new_state;
         default:
