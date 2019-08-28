@@ -153,7 +153,12 @@ export async function addFriendDB(friend_id){
     }
     
     dexie_db.version(current_idxdb_version+1).stores(db_config.dexie_db_schema);
-    await dexie_db.open();
+    try{
+        await dexie_db.open();
+    }catch(err){
+        debug.print('add Friend err->', err);
+    }
+    
 
     debug.print('add friend over->');
 }
