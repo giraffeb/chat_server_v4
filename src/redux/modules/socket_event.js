@@ -32,9 +32,10 @@ const socket_event = (state = initState, action)=>{
                 return;
             }
 
-            new_state.current_chatroom.chat_title = action.current_chatroom.chat_title;
-            
-            if(action.current_chatroom.chat_list !== null){
+            if(action.current_chatroom.chat_title !== undefined){
+                new_state.current_chatroom.chat_title = action.current_chatroom.chat_title;
+            }
+            if(action.current_chatroom.chat_list !== undefined){
                 new_state.current_chatroom.chat_list = action.current_chatroom.chat_list.slice();
             }
             
