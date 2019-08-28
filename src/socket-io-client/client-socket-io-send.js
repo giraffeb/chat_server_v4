@@ -18,5 +18,12 @@ function sendMessage(message){
     socket.emit('message', message);
 }
 
+function heartbeat(){
+    let current_user_info = api.getCurrentUserInfo();
+    socket.emit('heartbeat', current_user_info.user_id, (ack)=>{
+        console.log('receive hearbeat->', ack);
+    });
+}
+
 
 export { sendHello, sendMessage}; 
