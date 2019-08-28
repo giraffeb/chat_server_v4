@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 
-let socket = io('http://localhost:8888');
+let socket = io();
 
 
 export default socket;
