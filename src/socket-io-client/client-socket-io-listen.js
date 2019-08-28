@@ -79,7 +79,7 @@ function setSocketListen(store){
         let current_chatroom = api.getCurrentChatRoomInfo();
         //현재 채팅방이면 저장처리하고 상태변경을 해준다.
         
-        if(current_chatroom !== null){
+        if(current_chatroom !== undefined){
             if(msg.chatroom_id === current_chatroom._id){
                 debug.print("current chatroom");
     
