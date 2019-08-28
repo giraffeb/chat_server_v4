@@ -1,4 +1,4 @@
-let port = 8888;
+let port = process.env.PORT || 8888;
 let path = require('path');
 let server_path = __dirname+'/server';
 let wrap = require(server_path+'/util/async_wrap');
