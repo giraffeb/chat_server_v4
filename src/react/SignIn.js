@@ -59,7 +59,7 @@ export default function SignIn() {
     event.preventDefault();
     console.log(form_data);
 
-    let response = await fetch('http://localhost:8888/login',
+    let response = await fetch('/login',
       {method:"POST",
       headers: {
         'Accept': 'application/json',
