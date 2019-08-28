@@ -79,21 +79,19 @@ function setSocketListen(store){
         let current_chatroom = api.getCurrentChatRoomInfo();
         //현재 채팅방이면 저장처리하고 상태변경을 해준다.
         
-        if(current_chatroom !== undefined){
-            if(msg.chatroom_id === current_chatroom._id){
-                debug.print("current chatroom");
-    
-                //메시지 저장하기
-                await dao.saveMessageToDB(msg);
-                
-                //저장 후 채팅 리스트 가져오기
-                let new_chat_list = await dao.loadMessageFromDB(msg.sender);
-                
-                //채팅리스트 상태 변경해주기.
-                store.dispatch(chatList(msg.sender, new_chat_list));
-            }
+        if(current_chatroom !== undefined && msg.chatroom_id === current_chatroom._id){
+            debug.print("current chatroom");
+
+            //메시지 저장하기
+            await dao.saveMessageToDB(msg);
+            
+            //저장 후 채팅 리스트 가져오기
+            let new_chat_list = await dao.loadMessageFromDB(msg.sender);
+            
+            //채팅리스트 상태 변경해주기.
+            store.dispatch(chatList(msg.sender, new_chat_list));
         }
-        else{
+        else {
             debug.print("not current chatroom ");
             //메시지가 왔음을 상태로 알림
             store.dispatch(message(msg));
